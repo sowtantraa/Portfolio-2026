@@ -303,6 +303,49 @@ nav{
 .card-sub{ font-size:10.5px; color:var(--muted); margin-top:3px; letter-spacing:.3px; }
 
 /* ============================================================
+   FEATURED LONG-FORM VIDEO
+   ============================================================ */
+.featured-work{ margin:0 0 34px; }
+.featured-label{
+  display:flex; align-items:center; gap:9px; margin-bottom:11px;
+  font-family:'Special Elite',monospace; font-size:11px;
+  letter-spacing:1px; text-transform:uppercase; color:var(--rust);
+}
+.featured-label::before{
+  content:""; width:7px; height:7px; border-radius:50%; background:var(--rust);
+}
+.featured-card{
+  position:relative; display:block; width:100%; padding:0;
+  border:1px solid var(--line); background:var(--bg-card);
+  text-align:left; cursor:pointer; overflow:hidden;
+  box-shadow:2px 3px 0 rgba(42,38,34,.08);
+  transition:transform .25s ease,box-shadow .25s ease;
+}
+.featured-card:hover{ transform:translateY(-3px); box-shadow:3px 5px 0 rgba(42,38,34,.12); }
+.featured-media{ position:relative; width:100%; aspect-ratio:16/9; background:#1a1714; overflow:hidden; }
+.featured-media img{ display:block; width:100%; height:100%; object-fit:cover; }
+.featured-media::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg,rgba(20,17,15,.02),rgba(20,17,15,.24));
+}
+.featured-play{
+  position:absolute; z-index:1; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:58px; height:58px; border-radius:50%; display:grid; place-items:center;
+  background:rgba(20,17,15,.72); border:1px solid rgba(246,240,227,.8);
+}
+.featured-play::after{
+  content:""; margin-left:5px; width:0; height:0;
+  border-top:9px solid transparent; border-bottom:9px solid transparent;
+  border-left:14px solid #f6f0e3;
+}
+.featured-info{ display:flex; justify-content:space-between; align-items:center; gap:14px; padding:13px 15px; }
+.featured-title{ font-size:14px; font-weight:600; }
+.featured-sub{ margin-top:3px; color:var(--muted); font-size:11px; font-family:'Special Elite',monospace; }
+.featured-tag{ color:var(--rust); font:11px 'Special Elite',monospace; letter-spacing:.5px; white-space:nowrap; }
+.lightbox-inner.wide{ max-width:900px; }
+.lightbox-player.wide{ aspect-ratio:16/9; max-height:calc(100dvh - 120px); }
+
+/* ============================================================
    ABOUT
    ============================================================ */
 .about-grid{ display:grid; grid-template-columns:1fr 1.4fr; gap:46px; }
@@ -533,6 +576,24 @@ footer{
       <h2>The Reel</h2>
     </div>
     <div class="section-note">Click any cut to watch it with sound.</div>
+  </div>
+
+  <div class="featured-work" data-reveal>
+    <div class="featured-label">Featured · Long-form</div>
+    <button class="featured-card" id="featured-video" type="button" aria-label="Play featured long-form video">
+      <div class="featured-media">
+        <img src="https://i.ytimg.com/vi/_6XlgNwswkg/maxresdefault.jpg"
+             alt="Featured long-form video thumbnail" loading="lazy">
+        <span class="featured-play" aria-hidden="true"></span>
+      </div>
+      <div class="featured-info">
+        <div>
+          <div class="featured-title">Long-form Video</div>
+          <div class="featured-sub">Video Editing · YouTube</div>
+        </div>
+        <span class="featured-tag">16:9 ↗</span>
+      </div>
+    </button>
   </div>
 
   <div class="cat-block cat-talking" data-reveal>
@@ -784,18 +845,25 @@ function unmountPlayer(){
 }
 
 /* Lightbox */
-function openLightbox(videoId, title){
+function openLightbox(videoId, title, isWide = false){
   unmountPlayer();
   lightboxIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&playsinline=1`;
   lightboxTitle.textContent = title;
+  document.querySelector('.lightbox-inner').classList.toggle('wide', isWide);
+  document.querySelector('.lightbox-player').classList.toggle('wide', isWide);
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function closeLightbox(){
   lightbox.classList.remove('open');
+  document.querySelector('.lightbox-inner').classList.remove('wide');
+  document.querySelector('.lightbox-player').classList.remove('wide');
   lightboxIframe.src = "";
   document.body.style.overflow = '';
 }
+document.getElementById('featured-video').addEventListener('click', () =>
+  openLightbox('_6XlgNwswkg', 'Long-form Video', true)
+);
 lightboxClose.addEventListener('click', closeLightbox);
 lightbox.addEventListener('click', e=>{ if(e.target===lightbox) closeLightbox(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLightbox(); });
